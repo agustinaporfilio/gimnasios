@@ -1,0 +1,233 @@
+USE Gimnasios;
+
+-- tablas
+CREATE TABLE SOCIOS (
+    ID_Socio INT AUTO_INCREMENT NOT NULL UNIQUE,
+    Nombre VARCHAR (50) NOT NULL,
+     Apellido VARCHAR (50) NOT NULL,
+     DNI INT NOT NULL UNIQUE,
+     Email VARCHAR (100) NULL UNIQUE,
+     Telefono INT NULL UNIQUE,
+     SocioActivo BOOLEAN NOT NULL,
+     ID_Plan INT NOT NULL,
+     ID_MetodoDePago INT NOT NULL,
+     ID_DocumentosDeSalud INT NULL,
+    CONSTRAINT PK_Socios PRIMARY KEY (ID_Socio)
+    );
+    
+    
+    CREATE TABLE PLAN (
+    ID_Plan INT AUTO_INCREMENT NOT NULL UNIQUE,
+    NombrePlan VARCHAR(50) NOT NULL UNIQUE,
+    Descripcion VARCHAR(100) NOT NULL UNIQUE,
+    Precio FLOAT NOT NULL,
+    ID_Sede INT NOT NULL,
+    CONSTRAINT PK_Plan PRIMARY KEY (ID_Plan)
+);
+    
+   CREATE TABLE METODOS_DE_PAGO (
+    ID_MetodoDePago INT AUTO_INCREMENT NOT NULL UNIQUE,
+    TipoDePago VARCHAR(50) NOT NULL,
+    EntidadFinanciera VARCHAR(100) NULL,
+    Precio FLOAT NOT NULL,
+    Detalles VARCHAR (100) NULL,
+    ID_Socio INT NOT NULL UNIQUE,
+	CONSTRAINT PK_ID_MetodoDePago PRIMARY KEY (ID_MetodoDePago)
+); 
+
+    
+    CREATE TABLE DOCUMENTOS_DE_SALUD (
+    ID_Documento INT AUTO_INCREMENT NOT NULL UNIQUE,
+    ID_Socio INT NOT NULL UNIQUE,
+    TipoDeDocumento VARCHAR (100) NOT NULL,
+    Detalles VARCHAR(100) NULL,
+    FechaDeExpiracion DATE NOT NULL,
+    EstaApto BOOLEAN NOT NULL,
+    CONSTRAINT PK_ID_Documento PRIMARY KEY (ID_Documento)
+    );
+    
+    CREATE TABLE SEDES (
+    ID_Sede INT AUTO_INCREMENT NOT NULL UNIQUE,
+    NombreSede VARCHAR (50) NOT NULL UNIQUE,
+    Direccion VARCHAR (200) NOT NULL UNIQUE,
+    Email VARCHAR (100) NULL UNIQUE,
+     Telefono INT NULL UNIQUE,
+    ID_Plan INT NOT NULL,
+    CONSTRAINT PK_ID_Sede PRIMARY KEY (ID_Sede)
+    );
+    
+    CREATE TABLE HORARIOS_SEDES (
+    ID_HorariosSedes INT AUTO_INCREMENT NOT NULL UNIQUE,
+    ID_Sede INT NOT NULL UNIQUE,
+    HorarioApertura TIME NOT NULL,
+    HorarioCierre TIME NULL,
+     Telefono INT NULL UNIQUE,
+    ID_Plan INT NOT NULL,
+    CONSTRAINT PK_ID_HorariosSedes PRIMARY KEY (ID_HorariosSedes)
+    );
+    
+    CREATE TABLE CLASES (
+    ID_Clase INT AUTO_INCREMENT NOT NULL UNIQUE,
+    NombreClase VARCHAR (50) NOT NULL UNIQUE,
+    Descripcion VARCHAR (200) NULL UNIQUE,
+    ID_Sede INT (100) NOT NULL,
+     ID_Profesor INT NOT NULL,
+    ID_HorariosClases INT NOT NULL,
+    CONSTRAINT PK_ID_Clase PRIMARY KEY (ID_Clase)
+    );
+    
+    CREATE TABLE HORARIOS_CLASES (
+    ID_HorariosClases INT AUTO_INCREMENT NOT NULL UNIQUE,
+    ID_Clase INT NOT NULL, 
+    Dias VARCHAR (100) NOT NULL,
+    HorarioInicio TIME NOT NULL,
+    HorarioFin TIME NOT NULL,
+    CONSTRAINT PK_ID_HorariosClases PRIMARY KEY (ID_HorariosClases)
+    );
+    
+   CREATE TABLE STAFF_PROFESORES (
+    ID_Profesor INT AUTO_INCREMENT NOT NULL UNIQUE,
+    Nombre VARCHAR (50) NOT NULL,
+     Apellido VARCHAR (50) NOT NULL,
+     DNI INT NOT NULL UNIQUE,
+     Email VARCHAR (100) NULL UNIQUE,
+     Telefono INT NULL UNIQUE,
+     FechaInicioActividades DATE NOT NULL,
+     ID_Clase INT NOT NULL,
+     ID_Sede INT NOT NULL,
+     ID_AreaProfesores INT NULL,
+     ID_SalarioProfesores INT NULL,
+    CONSTRAINT PK_ID_Profesor PRIMARY KEY (ID_Profesor)
+    ); 
+    
+     CREATE TABLE AREA_PROFESORES (
+    ID_AreaProfesores INT AUTO_INCREMENT NOT NULL UNIQUE,
+    NombreArea VARCHAR (50) NOT NULL UNIQUE,
+     Detalles VARCHAR (100) NULL,
+    CONSTRAINT PK_ID_AreaProfesores PRIMARY KEY (ID_AreaProfesores)
+    ); 
+    
+     CREATE TABLE STAFF_ADMINISTRATIVOS (
+    ID_Administrativo INT AUTO_INCREMENT NOT NULL UNIQUE,
+    Nombre VARCHAR (50) NOT NULL,
+     Apellido VARCHAR (50) NOT NULL,
+     DNI INT NOT NULL UNIQUE,
+     Email VARCHAR (100) NULL UNIQUE,
+     Telefono INT NULL UNIQUE,
+     FechaInicioActividades DATE NOT NULL,
+     ID_Sede INT NOT NULL,
+     ID_AreaAdministrativos INT NULL,
+     ID_SalarioAdministrativos INT NULL,
+    CONSTRAINT PK_ID_Administrativo PRIMARY KEY (ID_Administrativo)
+    ); 
+    
+        CREATE TABLE AREA_ADMINISTRATIVOS (
+    ID_AreaAdministrativos INT AUTO_INCREMENT NOT NULL UNIQUE,
+    NombreArea VARCHAR (50) NOT NULL UNIQUE,
+     Detalles VARCHAR (100) NULL,
+    CONSTRAINT PK_ID_AreaAdministrativos PRIMARY KEY (ID_AreaAdministrativos)
+    ); 
+    
+    
+        CREATE TABLE SALARIO_PROFESORES (
+    ID_SalarioProfesores INT AUTO_INCREMENT NOT NULL UNIQUE,
+    ID_AreaProfesores INT NOT NULL UNIQUE,
+     Descripcion VARCHAR (200) NULL,
+     AntiguedadMinima TINYINT NOT NULL,
+     ValorHora FLOAT NOT NULL UNIQUE,
+    CONSTRAINT PK_ID_SalarioProfesores PRIMARY KEY (ID_SalarioProfesores)
+    ); 
+    
+          CREATE TABLE SALARIO_ADMINISTRATIVOS (
+    ID_SalarioAdministrativos INT AUTO_INCREMENT NOT NULL UNIQUE,
+    ID_AreaAdministrativos INT NOT NULL UNIQUE,
+     Descripcion VARCHAR (200) NULL,
+     AntiguedadMinima TINYINT NOT NULL,
+     ValorHora FLOAT NOT NULL UNIQUE,
+    CONSTRAINT PK_ID_SalarioAdministrativos PRIMARY KEY (ID_SalarioAdministrativos)
+    ); 
+    
+          CREATE TABLE REVIEWS (
+    ID_Review INT AUTO_INCREMENT NOT NULL UNIQUE,
+    ID_Socio INT NOT NULL,
+	ID_Sede INT NOT NULL,
+    ID_Profesor INT NOT NULL,
+    ID_Clase INT NOT NULL,
+    Calificacion TINYINT NOT NULL,
+    Comentarios VARCHAR (500) NULL,
+    FechaReview DATE NOT NULL,
+    CONSTRAINT PK_ID_Review PRIMARY KEY (ID_Review)
+    ); 
+    
+-- foreign keys
+ALTER TABLE SOCIOS ADD CONSTRAINT FK_ID_Plan_Socios FOREIGN KEY FK_ID_Plan (ID_Plan)
+    REFERENCES PLAN (ID_Plan);
+    
+ALTER TABLE SOCIOS ADD CONSTRAINT FK_ID_MetodoDePago_Socios FOREIGN KEY FK_ID_MetodoDePago (ID_MetodoDePago)
+    REFERENCES METODOS_DE_PAGO (ID_MetodoDePago);
+    
+ALTER TABLE SOCIOS ADD CONSTRAINT FK_ID_DocumentosDeSalud_Socios FOREIGN KEY FK_ID_DocumentosDeSalud (ID_DocumentosDeSalud)
+    REFERENCES DOCUMENTOS_DE_SALUD (ID_Documento);
+    
+ALTER TABLE PLAN ADD CONSTRAINT FK_ID_Sede_Plan FOREIGN KEY FK_ID_Sede (ID_Sede)
+	REFERENCES SEDES (ID_Sede);
+    
+ALTER TABLE METODOS_DE_PAGO ADD CONSTRAINT FK_ID_Socio_MetodosDePago FOREIGN KEY FK_ID_Socio (ID_Socio)
+	REFERENCES SOCIOS (ID_Socio); 
+    
+ALTER TABLE DOCUMENTOS_DE_SALUD ADD CONSTRAINT FK_ID_Socio_DocumentosDeSalud FOREIGN KEY FK_ID_Socio (ID_Socio)
+	REFERENCES SOCIOS (ID_Socio); 
+    
+ALTER TABLE SEDES ADD CONSTRAINT FK_ID_Plan_Sedes FOREIGN KEY FK_ID_Socio (ID_Plan)
+	REFERENCES PLAN (ID_Plan); 
+    
+ALTER TABLE HORARIOS_SEDES ADD CONSTRAINT FK_ID_Sede_HorariosSedes FOREIGN KEY FK_ID_Sede (ID_Sede)
+	REFERENCES SEDES (ID_Sede); 
+    
+ALTER TABLE CLASES ADD CONSTRAINT FK_ID_Sede_Clases FOREIGN KEY FK_ID_Sede (ID_Sede)
+	REFERENCES SEDES (ID_Sede); 
+    
+ALTER TABLE CLASES ADD CONSTRAINT FK_ID_Profesor_Clases FOREIGN KEY FK_ID_Profesor (ID_Profesor)
+	REFERENCES STAFF_PROFESORES (ID_Profesor); 
+    
+ALTER TABLE CLASES ADD CONSTRAINT FK_ID_HorariosClases_Clases FOREIGN KEY FK_ID_HorariosClases (ID_HorariosClases)
+	REFERENCES HORARIOS_CLASES (ID_HorariosClases); 
+    
+ALTER TABLE STAFF_PROFESORES ADD CONSTRAINT FK_ID_Clase_StaffProfesores FOREIGN KEY FK_ID_Clase (ID_Clase)
+	REFERENCES CLASES (ID_Clase); 
+    
+ALTER TABLE STAFF_PROFESORES ADD CONSTRAINT FK_ID_Sede_StaffProfesores FOREIGN KEY FK_ID_Sede (ID_Sede)
+	REFERENCES SEDES (ID_Sede); 
+    
+ALTER TABLE STAFF_PROFESORES ADD CONSTRAINT FK_ID_AreaProfesores_StaffProfesores FOREIGN KEY FK_ID_AreaProfesores (ID_AreaProfesores)
+	REFERENCES AREA_PROFESORES (ID_AreaProfesores); 
+    
+ALTER TABLE STAFF_PROFESORES ADD CONSTRAINT FK_ID_SalarioProfesores_StaffProfesores FOREIGN KEY FK_ID_SalarioProfesores (ID_SalarioProfesores)
+	REFERENCES SALARIO_PROFESORES (ID_SalarioProfesores); 
+    
+ALTER TABLE STAFF_ADMINISTRATIVOS ADD CONSTRAINT FK_ID_Sede_StaffAdministrativos FOREIGN KEY FK_ID_Sede (ID_Sede)
+	REFERENCES SEDES (ID_Sede); 
+    
+ALTER TABLE STAFF_ADMINISTRATIVOS ADD CONSTRAINT FK_ID_AreaAdministrativos_StaffAdministrativos FOREIGN KEY FK_ID_AreaAdministrativos (ID_AreaAdministrativos)
+	REFERENCES AREA_ADMINISTRATIVOS (ID_AreaAdministrativos); 
+    
+ALTER TABLE STAFF_ADMINISTRATIVOS ADD CONSTRAINT FK_ID_SalarioAdministrativos_StaffAdministrativos FOREIGN KEY FK_ID_SalarioAdministrativos (ID_SalarioAdministrativos)
+	REFERENCES SALARIO_ADMINISTRATIVOS (ID_SalarioAdministrativos); 
+    
+ALTER TABLE SALARIO_ADMINISTRATIVOS ADD CONSTRAINT FK_ID_AreaAdministrativos_SalarioAdministrativos FOREIGN KEY FK_ID_AreaAdministrativos (ID_AreaAdministrativos)
+	REFERENCES AREA_ADMINISTRATIVOS (ID_AreaAdministrativos);
+    
+ALTER TABLE SALARIO_PROFESORES ADD CONSTRAINT FK_ID_AreaProfesores_SalarioProfesores FOREIGN KEY FK_ID_AreaProfesores (ID_AreaProfesores)
+	REFERENCES AREA_PROFESORES (ID_AreaProfesores);
+    
+ALTER TABLE REVIEWS ADD CONSTRAINT FK_ID_Socio_Reviews FOREIGN KEY FK_ID_Socio (ID_Socio)
+	REFERENCES SOCIOS (ID_Socio);     
+    
+ALTER TABLE REVIEWS ADD CONSTRAINT FK_ID_Sede_Reviews FOREIGN KEY FK_ID_Sede (ID_Sede)
+	REFERENCES SEDES (ID_Sede); 
+    
+ALTER TABLE REVIEWS  ADD CONSTRAINT FK_ID_Profesor_Reviews FOREIGN KEY FK_ID_Profesor (ID_Profesor)
+	REFERENCES STAFF_PROFESORES (ID_Profesor); 
+    
+ALTER TABLE REVIEWS ADD CONSTRAINT FK_ID_Clase_Reviews FOREIGN KEY FK_ID_Clase (ID_Clase)
+	REFERENCES CLASES (ID_Clase); 
