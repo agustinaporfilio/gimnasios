@@ -658,15 +658,15 @@ JOIN CLASES_PROFESORES cp ON sp.ID_Profesor = cp.ID_Profesor
 JOIN CLASES C on c.ID_Clase = cp.ID_Clase
 WHERE cp.ID_Clase = 1;
 
-CREATE OR REPLACE VIEW ADMINISTRATIVOS_GERENCIA_SENIOR AS
+CREATE OR REPLACE VIEW ADMINISTRATIVOS_RECEPCION_JUNIOR AS
 SELECT Nombre, Apellido, NombreArea, AntiguedadMinima
 FROM STAFF_ADMINISTRATIVOS STA
 JOIN AREA_ADMINISTRATIVOS AA ON STA.ID_AreaAdministrativos = AA.ID_AreaAdministrativos
 JOIN SALARIO_ADMINISTRATIVOS SAA on STA.ID_SalarioAdministrativos = SAA.ID_SalarioAdministrativos
-WHERE SAA.AntiguedadMinima = 7 and STA.ID_AreaAdministrativos = 5;
+WHERE SAA.AntiguedadMinima = 1 and STA.ID_AreaAdministrativos = 1;
 
 CREATE OR REPLACE VIEW REVIEWS_SEDES AS
 SELECT NombreSede, Calificacion, Comentarios
 FROM REVIEWS R
 JOIN SEDES S ON S.ID_Sede = R.ID_SEDE
-WHERE Calificacion < 5;
+WHERE Calificacion > 5;
