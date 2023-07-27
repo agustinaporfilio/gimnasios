@@ -60,6 +60,14 @@ CREATE TABLE SOCIOS (
     FOREIGN KEY (ID_Sede) REFERENCES SEDES (ID_Sede)
     );
     
+        CREATE TABLE SOCIOS_PLAN (
+	ID_Socio INT NOT NULL,
+    ID_Plan INT NOT NULL,
+    PRIMARY KEY (ID_Socio, ID_Plan),
+    FOREIGN KEY (ID_Socio) REFERENCES SOCIOS (ID_Socio),
+    FOREIGN KEY (ID_Plan) REFERENCES PLAN (ID_Plan)
+);
+    
     CREATE TABLE CLASES (
     ID_Clase INT AUTO_INCREMENT NOT NULL UNIQUE,
     NombreClase VARCHAR (50) NOT NULL UNIQUE,
@@ -568,3 +576,97 @@ INSERT INTO REVIEWS (ID_Socio, ID_Sede, ID_Profesor, ID_Clase, Calificacion, Com
     (6, 5, NULL, NULL, 7, 'La sede es cómoda, pero la clase podría ser más dinámica.', '2023-07-23'),
     (21, 10, 25, 5, 6, 'No me gustó la clase, el profesor no explica bien.', '2023-07-22'),
     (14, 2, NULL, NULL, 9, 'Buena clase, el profesor es muy dedicado.', '2023-07-21');
+    
+        INSERT INTO PLAN_SEDES (ID_Plan, ID_Sede)
+    VALUES (3, 1),
+    (3, 2),
+    (3,3), 
+    (3, 4),
+    (3, 5), 
+    (3, 6),
+    (3, 7), 
+    (3, 8),
+    (3, 9), 
+    (3, 10), 
+     (2, 1),
+    (2, 2),
+    (2,3), 
+    (2, 4),
+    (2, 5), 
+    (2, 6),
+        (2, 7), 
+       (1, 1),
+    (1, 2),
+    (1,3), 
+    (1, 4);
+    
+INSERT INTO SOCIOS_PLAN (ID_Socio, ID_Plan) VALUES
+(1, 1),
+(2, 2),
+(3, 1),
+(4, 3),
+(5, 2),
+(6, 3),
+(7, 1),
+(8, 2),
+(9, 1),
+(10, 3),
+(11, 2),
+(12, 3),
+(13, 1),
+(14, 2),
+(15, 1),
+(16, 3),
+(17, 2),
+(18, 3),
+(19, 1),
+(20, 2),
+(21, 1),
+(22, 3),
+(23, 2),
+(24, 3),
+(25, 1),
+(26, 2),
+(27, 1),
+(28, 3),
+(29, 2),
+(30, 3),
+(31, 1),
+(32, 2),
+(33, 1),
+(34, 3),
+(35, 2),
+(36, 3);
+
+CREATE OR REPLACE VIEW SOCIOS_APTOS AS
+SELECT Nombre, Apellido, EstaApto
+FROM SOCIOS S
+JOIN DOCUMENTOS_DE_SALUD d ON S.ID_SOCIO = d.ID_Socio
+WHERE EstaApto = true;
+
+CREATE OR REPLACE VIEW SOCIOS_PLAN_PLATINUM AS
+SELECT Nombre, Apellido, NombrePlan
+FROM SOCIOS S
+JOIN SOCIOS_PLAN sp ON s.ID_Socio = sp.ID_Socio
+JOIN PLAN p ON p.ID_Plan = sp.ID_Plan
+WHERE sp.ID_Plan = 3;
+
+CREATE OR REPLACE VIEW PROFESORES_BC AS
+SELECT Nombre, Apellido, NombreClase
+FROM STAFF_PROFESORES SP
+JOIN CLASES_PROFESORES cp ON sp.ID_Profesor = cp.ID_Profesor
+JOIN CLASES C on c.ID_Clase = cp.ID_Clase
+WHERE cp.ID_Clase = 1;
+
+CREATE OR REPLACE VIEW ADMINISTRATIVOS_GERENCIA_SENIOR AS
+SELECT Nombre, Apellido, NombreArea, AntiguedadMinima
+FROM STAFF_ADMINISTRATIVOS STA
+JOIN AREA_ADMINISTRATIVOS AA ON STA.ID_AreaAdministrativos = AA.ID_AreaAdministrativos
+JOIN SALARIO_ADMINISTRATIVOS SAA on STA.ID_SalarioAdministrativos = SAA.ID_SalarioAdministrativos
+WHERE SAA.AntiguedadMinima = 7 and STA.ID_AreaAdministrativos = 5;
+
+CREATE OR REPLACE VIEW REVIEWS_SEDES AS
+SELECT NombreSede, Calificacion, Comentarios
+FROM REVIEWS R
+JOIN SEDES S ON S.ID_Sede = R.ID_SEDE
+WHERE Calificacion < 5;
