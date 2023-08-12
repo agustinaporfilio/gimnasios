@@ -4,7 +4,7 @@ create schema Gimnasios;
 
 USE Gimnasios;
 
--- tablas
+-- Creacion de las tablas para la DB Gimnasios
 CREATE TABLE SOCIOS (
     ID_Socio INT AUTO_INCREMENT NOT NULL UNIQUE,
     Nombre VARCHAR (50) NOT NULL,
@@ -159,7 +159,6 @@ CREATE TABLE CLASES_PROFESORES (
     FOREIGN KEY (ID_Profesor) REFERENCES STAFF_PROFESORES (ID_Profesor)
 );
 
-    
           CREATE TABLE REVIEWS (
     ID_Review INT AUTO_INCREMENT NOT NULL UNIQUE,
     ID_Socio INT NOT NULL,
@@ -172,8 +171,7 @@ CREATE TABLE CLASES_PROFESORES (
     CONSTRAINT PK_ID_Review PRIMARY KEY (ID_Review)
     ); 
     
--- foreign keys;
-    
+-- Alteracion de las tablas creadas para añadir las FK correspondientes;
 ALTER TABLE METODOS_DE_PAGO ADD CONSTRAINT FK_ID_Socio_MetodosDePago FOREIGN KEY FK_ID_Socio (ID_Socio)
 	REFERENCES SOCIOS (ID_Socio); 
     
@@ -213,8 +211,7 @@ ALTER TABLE REVIEWS  ADD CONSTRAINT FK_ID_Profesor_Reviews FOREIGN KEY FK_ID_Pro
 ALTER TABLE REVIEWS ADD CONSTRAINT FK_ID_Clase_Reviews FOREIGN KEY FK_ID_Clase (ID_Clase)
 	REFERENCES CLASES (ID_Clase);
     
--- insercion de datos;
-
+-- Insercion de datos a las tablas de la DB Gimnasios;
 INSERT INTO SOCIOS (Nombre, Apellido, DNI, Email, Telefono, SocioActivo) VALUES
 ('Juan', 'Gómez', 12345678, 'juan@example.com', 91234567, 1),
 ('María', 'Rodríguez', 23456789, 'maria@example.com', 82345678, 1),
@@ -638,12 +635,17 @@ INSERT INTO SOCIOS_PLAN (ID_Socio, ID_Plan) VALUES
 (35, 2),
 (36, 3);
 
+
+-- VISTAS
+
+-- Vista que muestre el nombre y apellido de los socios que estan aptos para realizar actividad fisica, unificando las tablas socios y documnetos de salud
 CREATE OR REPLACE VIEW SOCIOS_APTOS AS
 SELECT Nombre, Apellido, EstaApto
 FROM SOCIOS S
 JOIN DOCUMENTOS_DE_SALUD d ON S.ID_SOCIO = d.ID_Socio
 WHERE EstaApto = true;
 
+-- Vista que muestre el nombre y apellido de los socios que tengan el plan platinum, unificando las tablas socios y plan
 CREATE OR REPLACE VIEW SOCIOS_PLAN_PLATINUM AS
 SELECT Nombre, Apellido, NombrePlan
 FROM SOCIOS S
@@ -651,6 +653,7 @@ JOIN SOCIOS_PLAN sp ON s.ID_Socio = sp.ID_Socio
 JOIN PLAN p ON p.ID_Plan = sp.ID_Plan
 WHERE sp.ID_Plan = 3;
 
+-- Vista que muestre el nombre y apellido de los profesores que dicten la clase 'BODYCOMBAT', unificando las tablas staff_profesores y clases_profesores
 CREATE OR REPLACE VIEW PROFESORES_BC AS
 SELECT Nombre, Apellido, NombreClase
 FROM STAFF_PROFESORES SP
@@ -658,6 +661,7 @@ JOIN CLASES_PROFESORES cp ON sp.ID_Profesor = cp.ID_Profesor
 JOIN CLASES C on c.ID_Clase = cp.ID_Clase
 WHERE cp.ID_Clase = 1;
 
+-- Vista que muestra los datos sobre el staff administrativo que trabaja en el area de recepcion y su antiguedad minima es de 1 año (juniors)
 CREATE OR REPLACE VIEW ADMINISTRATIVOS_RECEPCION_JUNIOR AS
 SELECT Nombre, Apellido, NombreArea, AntiguedadMinima
 FROM STAFF_ADMINISTRATIVOS STA
@@ -665,8 +669,146 @@ JOIN AREA_ADMINISTRATIVOS AA ON STA.ID_AreaAdministrativos = AA.ID_AreaAdministr
 JOIN SALARIO_ADMINISTRATIVOS SAA on STA.ID_SalarioAdministrativos = SAA.ID_SalarioAdministrativos
 WHERE SAA.AntiguedadMinima = 1 and STA.ID_AreaAdministrativos = 1;
 
+-- Vista que muestra las reviews donde las sedes han sido puntuadas con > 5
 CREATE OR REPLACE VIEW REVIEWS_SEDES AS
 SELECT NombreSede, Calificacion, Comentarios
 FROM REVIEWS R
 JOIN SEDES S ON S.ID_Sede = R.ID_SEDE
 WHERE Calificacion > 5;
+
+-- FUNCIONES
+
+DELIMITER $$
+
+-- Crear la función para contar cantidad de profesores por sede
+CREATE FUNCTION ContarProfesoresPorSede(ID_Sede INT)
+RETURNS INT
+DETERMINISTIC 
+BEGIN
+    DECLARE contador_profesores INT;
+
+    -- Contar el número de profesores en la sede específica
+    SELECT COUNT(*) INTO contador_profesores
+    FROM SEDES_PROFESORES
+    WHERE ID_Sede = ID_Sede;
+
+    RETURN contador_profesores;
+END$$
+
+-- Crear funcion para calcular el porcentaje de aumento salarial segun la antiguedad del staff
+CREATE FUNCTION CalcularPorcentajeAumentoSalarial(antiguedad_en_anios INT)
+RETURNS DECIMAL(5, 2)
+NO SQL
+BEGIN
+    DECLARE porcentaje_aumento DECIMAL(5, 2);
+
+    -- Definir la política de aumento salarial basada en la antigüedad
+    IF antiguedad_en_anios < 1 THEN
+        SET porcentaje_aumento = 5.00; -- 5% de aumento para menos de 1 año de antigüedad
+    ELSEIF antiguedad_en_anios < 3 THEN
+        SET porcentaje_aumento = 7.50; -- 7.5% de aumento para 1 a 2 años de antigüedad
+    ELSE
+        SET porcentaje_aumento = 10.00; -- 10% de aumento para 3 o más años de antigüedad
+    END IF;
+
+    RETURN porcentaje_aumento;
+END$$
+
+-- STORED PROCEDURES
+
+-- crear un stored procedure que ordene la tabla socios por sus columnas en orden asc/desc
+CREATE PROCEDURE sp_ordenar_tabla_socios (
+IN columna VARCHAR(50), 
+IN orden VARCHAR(4)
+)
+
+BEGIN
+ -- validar campo de ordenamiento de la tabla
+IF columna <>  '' THEN
+	SET @socios_columna = concat('ORDER BY ', columna);
+ELSE
+	SET @socios_columna = '';
+END IF;
+
+ -- verficar si el parametro de orden es valido
+ IF (orden <> 'ASC' AND orden <> 'DESC') THEN 
+ SIGNAL SQLSTATE '45000' SET MESSAGE_TEXT = 'El parametro de orden debe ser "ASC" o "DESC".';
+ END IF;
+ 
+SET @clausula = concat('SELECT * FROM SOCIOS ', @socios_columna, ' ', orden);
+
+PREPARE ordenar FROM @clausula;
+EXECUTE ordenar;
+DEALLOCATE PREPARE ordenar;
+END$$
+
+-- crear un SP que inserte valores en la tabla socios
+CREATE PROCEDURE sp_insertar_socio(
+    IN p_Nombre VARCHAR(50),
+    IN p_Apellido VARCHAR(50),
+    IN p_DNI INT,
+    IN p_Email VARCHAR(100),
+    IN p_Telefono INT,
+    IN p_SocioActivo TINYINT
+)
+BEGIN
+-- insertar valores en la tabla socios
+    INSERT INTO SOCIOS (Nombre, Apellido, DNI, Email, Telefono, SocioActivo)
+    VALUES (p_Nombre, p_Apellido, p_DNI, p_Email, p_Telefono, p_SocioActivo);
+END $$
+
+DELIMITER ;
+
+-- TRIGGERS
+-- Creacion de una tabla para llevar registro de los logs sobre la tabla socios
+CREATE TABLE socios_log (
+  ID_Log int AUTO_INCREMENT PRIMARY KEY,
+  ID_Socio int,
+  Nombre varchar(50),
+  Apellido varchar(50),
+  DNI int,
+  Email varchar(100),
+  Telefono int,
+  SocioActivo tinyint,
+  Accion varchar(10),
+  FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  Usuario VARCHAR (50)
+);
+
+DELIMITER $$
+
+-- Crear trigger del tipo AFTER para registrar las inserciones de datos que se realicen en la tabla socios
+CREATE TRIGGER tr_socios_after_insert
+AFTER INSERT ON socios FOR EACH ROW
+BEGIN
+  INSERT INTO socios_log (ID_Socio, Nombre, Apellido, DNI, Email, Telefono, SocioActivo, Accion, Usuario)
+  VALUES (NEW.ID_Socio, NEW.Nombre, NEW.Apellido, NEW.DNI, NEW.Email, NEW.Telefono, NEW.SocioActivo, 'INSERT', USER());
+END$$
+
+DELIMITER ;
+
+-- Crear tabla que lleve el log de los cambios en la tabla salario profesores
+CREATE TABLE SALARIO_PROFESORES_LOG (
+  ID_Log int AUTO_INCREMENT PRIMARY KEY,
+  ID_SalarioProfesores int,
+  ID_AreaProfesores int,
+  Descripcion varchar(200),
+  AntiguedadMinima tinyint,
+  ValorHora float,
+  Accion varchar(10),
+  FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+  Usuario varchar(50)
+);
+
+DELIMITER $$
+
+-- crear trigger del tipo BEFORE para la tabla salario profesores
+CREATE TRIGGER tr_salario_profesores_before_insert
+BEFORE INSERT ON SALARIO_PROFESORES FOR EACH ROW
+BEGIN
+  INSERT INTO SALARIO_PROFESORES_LOG (ID_SalarioProfesores, ID_AreaProfesores, Descripcion, AntiguedadMinima, ValorHora, Accion, Usuario)
+  VALUES (NEW.ID_SalarioProfesores, NEW.ID_AreaProfesores, NEW.Descripcion, NEW.AntiguedadMinima, NEW.ValorHora, 'INSERT', CURRENT_USER());
+END$$
+
+DELIMITER ;
+
