@@ -13,6 +13,7 @@ CREATE TABLE SOCIOS (
      Email VARCHAR (100) NULL UNIQUE,
      Telefono INT NOT NULL UNIQUE,
      SocioActivo BOOLEAN NOT NULL,
+     FechaDeNacimiento DATE NULL,
     CONSTRAINT PK_Socios PRIMARY KEY (ID_Socio)
     );
     
@@ -212,43 +213,43 @@ ALTER TABLE REVIEWS ADD CONSTRAINT FK_ID_Clase_Reviews FOREIGN KEY FK_ID_Clase (
 	REFERENCES CLASES (ID_Clase);
     
 -- Insercion de datos a las tablas de la DB Gimnasios;
-INSERT INTO SOCIOS (Nombre, Apellido, DNI, Email, Telefono, SocioActivo) VALUES
-('Juan', 'Gómez', 12345678, 'juan@example.com', 91234567, 1),
-('María', 'Rodríguez', 23456789, 'maria@example.com', 82345678, 1),
-('Pedro', 'López', 34567890, 'pedro@example.com', 73456789, 1),
-('Ana', 'Martínez', 45678901, 'ana@example.com', 64567890, 1),
-('Luis', 'García', 56789012, 'luis@example.com', 55678901, 1),
-('Laura', 'Fernández', 67890123, 'laura@example.com', 46789012, 1),
-('Carlos', 'Pérez', 78901234, 'carlos@example.com', 37890123, 1),
-('Marta', 'Gutiérrez', 89012345, 'marta@example.com', 28901234, 1),
-('Roberto', 'Díaz', 90123456, 'roberto@example.com', 19012345, 1),
-('Sofía', 'Silva', 98765432, 'sofia@example.com', 87654321, 1),
-('Lucía', 'Torres', 87654321, 'lucia@example.com', 76543210, 1),
-('Diego', 'González', 76543210, 'diego@example.com', 65432109, 1),
-('Valentina', 'Hernández', 65432109, 'valentina@example.com', 54321098, 1),
-('Andrés', 'Ramírez', 54321098, 'andres@example.com', 43210987, 1),
-('Camila', 'Sánchez', 43210987, 'camila@example.com', 32109876, 1),
-('Javier', 'Romero', 32109876, 'javier@example.com', 21098765, 1),
-('Marcela', 'Ortega', 21098765, 'marcela@example.com', 10987654, 1),
-('Fernando', 'Fuentes', 10987654, 'fernando@example.com', 98765432, 1),
-('Gabriela', 'Meza', 99887766, 'gabriela@example.com', 12345678, 1),
-('Eduardo', 'Cortés', 88776655, 'eduardo@example.com', 23456789, 1),
-('Brenda', 'Paredes', 77665544, 'brenda@example.com', 34567890, 1),
-('Roberto', 'Morales', 66554433, 'roberto_morales@example.com', 45678901, 1),
-('Carolina', 'Vargas', 55443322, 'carolina@example.com', 56789012, 1),
-('David', 'Valenzuela', 44332211, 'david@example.com', 67890123, 1),
-('Natalia', 'Figueroa', 33221100, 'natalia@example.com', 78901234, 1),
-('Mauricio', 'Espinoza', 22110099, 'mauricio@example.com', 89012345, 1),
-('Alejandra', 'Rojas', 11009988, 'alejandra@example.com', 90123456, 1),
-('Ricardo', 'Soto', 99008877, 'ricardo@example.com', 90234567, 1),
-('Amanda', 'Castillo', 88007766, 'amanda@example.com', 90345678, 1),
-('Emilio', 'Gallardo', 77006655, 'emilio@example.com', 90456789, 1),
-('Valeria', 'Rivas', 66005544, 'valeria@example.com', 90567890, 1),
-('Hugo', 'Montoya', 55004433, 'hugo@example.com', 90678901, 1),
-('Isabel', 'Santos', 44003322, 'isabel@example.com', 90789012, 1),
-('Ángel', 'Delgado', 33002211, 'angel@example.com', 90890123, 1),
-('Adriana', 'Paredes', 22001100, 'adriana@example.com', 90901234, 1),
-('Sebastián', 'Meza', 11000099, 'sebastian@example.com', 91012345, 1);
+INSERT INTO SOCIOS (Nombre, Apellido, DNI, Email, Telefono, SocioActivo, FechaDeNacimiento) VALUES
+('Juan', 'Gómez', 12345678, 'juan@example.com', 91234567, 1, '2000-09-13'),
+('María', 'Rodríguez', 23456789, 'maria@example.com', 82345678, 1, '1993-04-14'),
+('Pedro', 'López', 34567890, 'pedro@example.com', 73456789, 1, '2000-08-31'),
+('Ana', 'Martínez', 45678901, 'ana@example.com', 64567890, 1, '1996-06-30'),
+('Luis', 'García', 56789012, 'luis@example.com', 55678901, 1, '1996-10-12'),
+('Laura', 'Fernández', 67890123, 'laura@example.com', 46789012, 1, '1999-04-13'),
+('Carlos', 'Pérez', 78901234, 'carlos@example.com', 37890123, 1, '1982-08-06'),
+('Marta', 'Gutiérrez', 89012345, 'marta@example.com', 28901234, 1, '1983-01-15'),
+('Roberto', 'Díaz', 90123456, 'roberto@example.com', 19012345, 1, '1990-08-04'),
+('Sofía', 'Silva', 98765432, 'sofia@example.com', 87654321, 1, '1985-02-23'),
+('Lucía', 'Torres', 87654321, 'lucia@example.com', 76543210, 1, '1970-01-31'),
+('Diego', 'González', 76543210, 'diego@example.com', 65432109, 1, '1997-05-05'),
+('Valentina', 'Hernández', 65432109, 'valentina@example.com', 54321098, 1, '1979-03-11'),
+('Andrés', 'Ramírez', 54321098, 'andres@example.com', 43210987, 1, '2001-07-18'),
+('Camila', 'Sánchez', 43210987, 'camila@example.com', 32109876, 1, '2002-11-10'),
+('Javier', 'Romero', 32109876, 'javier@example.com', 21098765, 1, '1998-12-15'),
+('Marcela', 'Ortega', 21098765, 'marcela@example.com', 10987654, 1, '1988-12-29'),
+('Fernando', 'Fuentes', 10987654, 'fernando@example.com', 98765432, 1, '1969-10-23'),
+('Gabriela', 'Meza', 99887766, 'gabriela@example.com', 12345678, 1, '1960-02-20'),
+('Eduardo', 'Cortés', 88776655, 'eduardo@example.com', 23456789, 1, '1968-03-13'),
+('Brenda', 'Paredes', 77665544, 'brenda@example.com', 34567890, 1, '1972-08-27'),
+('Roberto', 'Morales', 66554433, 'roberto_morales@example.com', 45678901, 1, '1992-05-17'),
+('Carolina', 'Vargas', 55443322, 'carolina@example.com', 56789012, 1, '1993-06-04'),
+('David', 'Valenzuela', 44332211, 'david@example.com', 67890123, 1, '1991-01-05'),
+('Natalia', 'Figueroa', 33221100, 'natalia@example.com', 78901234, 1, '1987-10-19'),
+('Mauricio', 'Espinoza', 22110099, 'mauricio@example.com', 89012345, 1, '2000-06-24'),
+('Alejandra', 'Rojas', 11009988, 'alejandra@example.com', 90123456, 1, '1977-04-29'),
+('Ricardo', 'Soto', 99008877, 'ricardo@example.com', 90234567, 1, '1974-03-27'),
+('Amanda', 'Castillo', 88007766, 'amanda@example.com', 90345678, 1, '1990-07-18'),
+('Emilio', 'Gallardo', 77006655, 'emilio@example.com', 90456789, 1, '1976-10-31'),
+('Valeria', 'Rivas', 66005544, 'valeria@example.com', 90567890, 1, '1987-04-07'),
+('Hugo', 'Montoya', 55004433, 'hugo@example.com', 90678901, 1, '2002-05-28'),
+('Isabel', 'Santos', 44003322, 'isabel@example.com', 90789012, 1, '2004-02-26'),
+('Ángel', 'Delgado', 33002211, 'angel@example.com', 90890123, 1, '1989-01-20'),
+('Adriana', 'Paredes', 22001100, 'adriana@example.com', 90901234, 1, '1962-02-10'),
+('Sebastián', 'Meza', 11000099, 'sebastian@example.com', 91012345, 1, '1963-11-01');
 
 
 INSERT INTO PLAN (NombrePlan, Descripcion, Precio)
@@ -770,6 +771,7 @@ CREATE TABLE socios_log (
   Email varchar(100),
   Telefono int,
   SocioActivo tinyint,
+  FechaDeNacimiento date,
   Accion varchar(10),
   FechaRegistro TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
   Usuario VARCHAR (50)
@@ -811,4 +813,3 @@ BEGIN
 END$$
 
 DELIMITER ;
-
